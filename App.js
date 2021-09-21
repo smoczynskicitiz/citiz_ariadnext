@@ -55,13 +55,35 @@ const Section = ({children, title}): Node => {
 };
 
 const App: () => Node = () => {
-  return (
-    <WebView
-      source={{
-        uri: 'https://sdkweb-test.idcheck.io/v2/Citiz/216213e9-e1ae-4b9b-bc76-f9b028826236',
-      }}
-    />
-  );
+  const [permissionsOK, setPermissionsOK] = useState<boolean>(false);
+
+  PermissionsAndroid.requestMultiple([
+    PermissionsAndroid.PERMISSIONS.CAMERA,
+    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  ]).then(result => {
+    console.log(result);
+    if (
+      result['android.permission.CAMERA'] === 'granted' &&
+      result['android.permission.RECORD_AUDIO'] === 'granted' &&
+      result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
+    ) {
+      console.log('Permissions OK');
+      setPermissionsOK(true);
+    }
+  });
+
+  if (permissionsOK) {
+    return (
+      <WebView
+        source={{
+          uri: 'https://sdkweb-test.idcheck.io/v2/Citiz/216213e9-e1ae-4b9b-bc76-f9b028826236',
+        }}
+      />
+    );
+  } else {
+    return <Text>Hello, waiting for permissions</Text>;
+  }
 };
 
 const styles = StyleSheet.create({
