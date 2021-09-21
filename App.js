@@ -57,21 +57,15 @@ const Section = ({children, title}): Node => {
 const App: () => Node = () => {
   const [permissionsOK, setPermissionsOK] = useState<boolean>(false);
 
-  PermissionsAndroid.requestMultiple([
-    PermissionsAndroid.PERMISSIONS.CAMERA,
-    PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  ]).then(result => {
-    console.log(result);
-    if (
-      result['android.permission.CAMERA'] === 'granted' &&
-      result['android.permission.RECORD_AUDIO'] === 'granted' &&
-      result['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'
-    ) {
-      console.log('Permissions OK');
-      setPermissionsOK(true);
-    }
-  });
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA).then(
+    result => {
+      console.log(result);
+      if (result === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Permissions OK');
+        setPermissionsOK(true);
+      }
+    },
+  );
 
   if (permissionsOK) {
     return (
